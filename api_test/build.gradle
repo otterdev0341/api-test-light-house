@@ -10,13 +10,15 @@ repositories {
     mavenCentral()
 }
 
+
+
 dependencies {
 
     // add groovy dependency
     implementation 'org.apache.groovy:groovy:4.0.14'
     implementation 'org.apache.groovy:groovy-json:4.0.14'
     // Allure Spock adapter
-    testImplementation(platform("io.qameta.allure:allure-bom:2.24.0"))
+    testImplementation(platform("io.qameta.allure:allure-bom:2.25.0"))
     testImplementation("io.qameta.allure:allure-spock2")
     testImplementation("io.qameta.allure:allure-junit-platform")
 
@@ -42,3 +44,4 @@ dependencies {
 test {
     useJUnitPlatform()
 }
+

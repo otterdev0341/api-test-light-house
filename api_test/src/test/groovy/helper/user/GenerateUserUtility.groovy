@@ -1,5 +1,6 @@
 package helper.user
 
+import dto.auth.ReqSignInDto
 import dto.auth.ReqSignUpDto
 import helper.RandomUtility
 
@@ -89,4 +90,9 @@ class GenerateUserUtility {
     }
 
 
+    static ReqSignInDto generateValidUserToSignIn() {
+        def email = "test@gmail.com"
+        def password = "password"
+        return new ReqSignInDto(email: email, password: password)
+    }
 }
