@@ -1,0 +1,47 @@
+plugins {
+    id 'groovy'
+    id 'io.qameta.allure' version '2.11.2' // Add Allure plugin
+}
+
+group = 'org.example'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+// Configure Allure
+allure {
+    report {
+        version = '2.24.1' // Specify Allure commandline version
+    }
+    adapter { // Optional: configure Allure adapter behavior
+        aspectjVersion = '1.9.21' // Specify AspectJ version for Allure Spock
+        frameworks {
+            spock {
+                enabled = true
+            }
+        }
+    }
+}
+
+dependencies {
+    implementation 'org.apache.groovy:groovy:4.0.14'
+
+    // Spock Framework
+    testImplementation 'org.spockframework:spock-core:2.3-groovy-4.0'
+
+    // Allure Spock adapter
+    testImplementation 'io.qameta.allure:allure-spock:2.24.0' // Or the latest version
+
+    // JUnit 5 for running Spock tests (needed by Allure Spock as well)
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+
+
+
+}
+
+test {
+    useJUnitPlatform()
+}
