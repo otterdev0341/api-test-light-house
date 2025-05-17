@@ -1,6 +1,6 @@
 plugins {
     id 'groovy'
-    id 'io.qameta.allure' version '2.11.2' // Add Allure plugin
+
 }
 
 group = 'org.example'
@@ -10,34 +10,31 @@ repositories {
     mavenCentral()
 }
 
-// Configure Allure
-allure {
-    report {
-        version = '2.24.1' // Specify Allure commandline version
-    }
-    adapter { // Optional: configure Allure adapter behavior
-        aspectjVersion = '1.9.21' // Specify AspectJ version for Allure Spock
-        frameworks {
-            spock {
-                enabled = true
-            }
-        }
-    }
-}
-
 dependencies {
+
+    // add groovy dependency
     implementation 'org.apache.groovy:groovy:4.0.14'
-
-    // Spock Framework
-    testImplementation 'org.spockframework:spock-core:2.3-groovy-4.0'
-
+    implementation 'org.apache.groovy:groovy-json:4.0.14'
     // Allure Spock adapter
-    testImplementation 'io.qameta.allure:allure-spock:2.24.0' // Or the latest version
+    testImplementation(platform("io.qameta.allure:allure-bom:2.24.0"))
+    testImplementation("io.qameta.allure:allure-spock2")
+    testImplementation("io.qameta.allure:allure-junit-platform")
 
-    // JUnit 5 for running Spock tests (needed by Allure Spock as well)
-    testImplementation platform('org.junit:junit-bom:5.10.0')
-    testImplementation 'org.junit.jupiter:junit-jupiter'
+    // Spock framework
+    testImplementation(platform("org.spockframework:spock-bom:2.3-groovy-4.0"))
+    testImplementation("org.spockframework:spock-core")
 
+    // Rest Assure
+    testImplementation 'io.rest-assured:rest-assured:5.4.0' // Or the latest version
+    testImplementation 'io.rest-assured:json-path:5.4.0'
+    testImplementation 'io.rest-assured:xml-path:5.4.0'
+    testImplementation 'com.fasterxml.jackson.core:jackson-databind:2.15.3' // Or the latest stable version
+
+    // JUnit 5 Jupiter API - for annotations like @DisplayName
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.1' // Or the latest stable version
+
+    // Log
+    testImplementation 'org.slf4j:slf4j-simple:2.0.9'
 
 
 }

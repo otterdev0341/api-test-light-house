@@ -16,6 +16,7 @@ out/
 !**/src/main/**/out/
 !**/src/test/**/out/
 lib/
+allure-results/
 
 ### Eclipse ###
 .apt_generated
