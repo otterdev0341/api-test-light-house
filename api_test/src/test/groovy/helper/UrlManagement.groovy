@@ -43,6 +43,10 @@ class UrlManagement {
         return getBaseUrl() + "/v1/user"
     }
 
+    static String getBaseAssetTypeUrl() {
+        return getBaseUrl() + "/v1/asset-type"
+    }
+
     @Step("Get Asset Type Url for test base on Enum")
     static String getAssetTypeUrl(BASECRUD crud, String asset_type_id) {
         switch (crud){

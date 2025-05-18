@@ -75,6 +75,7 @@ class FetchApiResponseUtility {
 
         Response response = request
                 .contentType(ContentType.JSON)
+                .body(body)
                 .put(prepared_url)
 
         return response
@@ -86,13 +87,14 @@ class FetchApiResponseUtility {
             String target_id
 
     ){
+        def prepared_url = url + "/${target_id}"
         RequestSpecification request = RestAssured.given()
                 .log().all()
                 .header("Authorization", "Bearer " + jwt_token)
 
         Response response = request
                 .contentType(ContentType.JSON)
-                .delete(url)
+                .delete(prepared_url)
 
         return response
     }
