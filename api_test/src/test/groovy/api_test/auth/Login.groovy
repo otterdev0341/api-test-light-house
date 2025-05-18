@@ -20,7 +20,7 @@ import static io.restassured.matcher.RestAssuredMatchers.*
 import static org.hamcrest.Matchers.*
 
 @Epic("REST API Tests") // Overall epic for these tests
-@Feature("Perform Login Test")
+@Feature("Perform Login Test must be pass")
 class Login extends Specification {
 
     @Story("Login Attempt with valid user")
@@ -29,10 +29,11 @@ class Login extends Specification {
         This is will login with valid user, then will return jwt token
     """)
     @Severity(SeverityLevel.CRITICAL)
-    def "Perform Login"() {
+    def "Perform Login must"() {
         given:
             def sign_in_url = UrlManagement.getAuthUrl(AUTH.SignIn)
             def valid_user = GenerateSignInUtility.generateValidUserToSignIn()
+        Allure.addAttachment("Request Payload - Specific User Sign In", "application/json", new groovy.json.JsonOutput().toJson(valid_user), ".json")
         when: "a POST request is sent to login with valid credentials"
         Response response = given()
             .contentType(ContentType.JSON)
@@ -50,7 +51,7 @@ class Login extends Specification {
 
 
 
-    @Story("Login Attempt with Empty Email")
+    @Story("Login Attempt with Empty Email must be fail")
     @DisplayName("Should fail login with empty email")
     @Description("""
         expect error message because email is empty
@@ -60,6 +61,7 @@ class Login extends Specification {
         given:
         def sign_in_url = UrlManagement.getAuthUrl(AUTH.SignIn)
         def invalid_user = GenerateSignInUtility.generateInvalidBaseOnCase(INVALID_LOGIN.EMPTY_EMAIL)
+        Allure.addAttachment("Request Payload - Specific User Sign In", "application/json", new groovy.json.JsonOutput().toJson(invalid_user), ".json")
         when: "a POST request is sent to login with empty email field"
         Response response = given()
                 .contentType(ContentType.JSON)
@@ -76,7 +78,7 @@ class Login extends Specification {
     }// end function
 
 
-    @Story("Login Attempt with Invalid Email")
+    @Story("Login Attempt with Invalid Email must be fail")
     @DisplayName("Should fail login with invalid email")
     @Description("""
         expect error message because email is invalid
@@ -86,6 +88,7 @@ class Login extends Specification {
         given:
         def sign_in_url = UrlManagement.getAuthUrl(AUTH.SignIn)
         def invalid_user = GenerateSignInUtility.generateInvalidBaseOnCase(INVALID_LOGIN.INVALID_EMAIL)
+        Allure.addAttachment("Request Payload - Specific User Sign In", "application/json", new groovy.json.JsonOutput().toJson(invalid_user), ".json")
         when: "a POST request is sent to login with invalid email field"
         Response response = given()
                 .contentType(ContentType.JSON)
@@ -102,7 +105,7 @@ class Login extends Specification {
     }// end function
 
 
-    @Story("Login Attempt with Empty Password")
+    @Story("Login Attempt with Empty Password must be fail")
     @DisplayName("Should fail login with empty password")
     @Description("""
         expect error message because with empty password
@@ -112,6 +115,7 @@ class Login extends Specification {
         given:
         def sign_in_url = UrlManagement.getAuthUrl(AUTH.SignIn)
         def invalid_user = GenerateSignInUtility.generateInvalidBaseOnCase(INVALID_LOGIN.EMPTY_PASSWORD)
+        Allure.addAttachment("Request Payload - Specific User Sign In", "application/json", new groovy.json.JsonOutput().toJson(invalid_user), ".json")
         when: "a POST request is sent to login with with empty password field"
         Response response = given()
                 .contentType(ContentType.JSON)
@@ -127,7 +131,7 @@ class Login extends Specification {
         Allure.addAttachment("Response - User Login", "application/json", response.asString(), ".json")
     }// end function
 
-    @Story("Login Attempt with Invalid Password")
+    @Story("Login Attempt with Invalid Password must be fail")
     @DisplayName("Should fail login with invalid password")
     @Description("""
         expect error message because with invalid password
@@ -137,6 +141,7 @@ class Login extends Specification {
         given:
         def sign_in_url = UrlManagement.getAuthUrl(AUTH.SignIn)
         def invalid_user = GenerateSignInUtility.generateInvalidBaseOnCase(INVALID_LOGIN.INVALID_PASSWORD)
+        Allure.addAttachment("Request Payload - Specific User Sign In", "application/json", new groovy.json.JsonOutput().toJson(invalid_user), ".json")
         when: "a POST request is sent to login with with invalid password field"
         Response response = given()
                 .contentType(ContentType.JSON)
@@ -153,7 +158,7 @@ class Login extends Specification {
     }// end function
 
 
-    @Story("Login Attempt with Invalid Email and Password")
+    @Story("Login Attempt with Invalid Email and Password must be fail")
     @DisplayName("Should fail login with invalid email and password")
     @Description("""
         expect error message because with invalid email and password
@@ -163,6 +168,7 @@ class Login extends Specification {
         given:
         def sign_in_url = UrlManagement.getAuthUrl(AUTH.SignIn)
         def invalid_user = GenerateSignInUtility.generateInvalidBaseOnCase(INVALID_LOGIN.INVALID_BOTH_EMAIL_PASSWORD)
+        Allure.addAttachment("Request Payload - Specific User Sign In", "application/json", new groovy.json.JsonOutput().toJson(invalid_user), ".json")
         when: "a POST request is sent to login with with invalid email and password field"
         Response response = given()
                 .contentType(ContentType.JSON)
@@ -178,7 +184,7 @@ class Login extends Specification {
         Allure.addAttachment("Response - User Login", "application/json", response.asString(), ".json")
     }// end function
 
-    @Story("Login Attempt with Empty Email and Password")
+    @Story("Login Attempt with Empty Email and Password must be fail")
     @DisplayName("Should fail login with empty email and password")
     @Description("""
         expect error message because with empty email and password
@@ -188,6 +194,7 @@ class Login extends Specification {
         given:
         def sign_in_url = UrlManagement.getAuthUrl(AUTH.SignIn)
         def invalid_user = GenerateSignInUtility.generateInvalidBaseOnCase(INVALID_LOGIN.EMPTY_BOTH_EMAIL_PASSWORD)
+        Allure.addAttachment("Request Payload - Specific User Sign In", "application/json", new groovy.json.JsonOutput().toJson(invalid_user), ".json")
         when: "a POST request is sent to login with with empty email and password field"
         Response response = given()
                 .contentType(ContentType.JSON)
