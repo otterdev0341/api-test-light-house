@@ -92,7 +92,7 @@ class Register extends Specification {
         response.then()
                 .log().all()
                 .statusCode(500)
-
+        Allure.addAttachment("Response - Create User", "application/json", response.asString(), ".json")
     }
 
     @Story("User Registration Attempt - Invalid username")
@@ -120,6 +120,8 @@ class Register extends Specification {
                     .log().all()
                     .statusCode(400)
 
+        Allure.addAttachment("Response - Create User", "application/json", response.asString(), ".json")
+
     }// end function
 
     @Story("User Registration Attempt - Invalid password")
@@ -146,7 +148,7 @@ class Register extends Specification {
         response.then()
                 .log().all()
                 .statusCode(400)
-
+        Allure.addAttachment("Response - Create User", "application/json", response.asString(), ".json")
     }// end function
 
     @Story("User Registration Attempt - Invalid email")
@@ -173,7 +175,7 @@ class Register extends Specification {
         response.then()
                 .log().all()
                 .statusCode(400)
-
+        Allure.addAttachment("Response - Create User", "application/json", response.asString(), ".json")
     }// end function
 
 
@@ -201,7 +203,7 @@ class Register extends Specification {
         response.then()
                 .log().all()
                 .statusCode(400)
-
+        Allure.addAttachment("Response - Create User", "application/json", response.asString(), ".json")
     }// end function
 
     @Story("User Registration Attempt - Invalid last name")
@@ -228,7 +230,7 @@ class Register extends Specification {
         response.then()
                 .log().all()
                 .statusCode(400)
-
+        Allure.addAttachment("Response - Create User", "application/json", response.asString(), ".json")
     }// end function
 
     @Story("User Registration Attempt - Invalid last gender")
@@ -255,7 +257,7 @@ class Register extends Specification {
         response.then()
                 .log().all()
                 .statusCode(400)
-
+        Allure.addAttachment("Response - Create User", "application/json", response.asString(), ".json")
     }// end function
 
     @Story("User Registration Attempt - All Empty Field")
@@ -282,7 +284,7 @@ class Register extends Specification {
         response.then()
                 .log().all()
                 .statusCode(400)
-
+        Allure.addAttachment("Response - Create User", "application/json", response.asString(), ".json")
     }// end function
 
     @Story("User Registration Attempt - Exist Username")
@@ -310,7 +312,7 @@ class Register extends Specification {
         response.then()
                 .log().all()
                 .statusCode(500)
-
+        Allure.addAttachment("Response - Create User", "application/json", response.asString(), ".json")
     }// end function
 
     @Story("User Registration Attempt - Exist Email")
@@ -338,7 +340,7 @@ class Register extends Specification {
         response.then()
                 .log().all()
                 .statusCode(500)
-
+        Allure.addAttachment("Response - Create User", "application/json", response.asString(), ".json")
     }// end function
 
 
