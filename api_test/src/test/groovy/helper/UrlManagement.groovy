@@ -56,6 +56,10 @@ class UrlManagement {
 
     }
 
+    static String getBaseExpenseType() {
+        return getBaseUrl() + "/v1/expense-type"
+    }
+
     static String getBaseContact() {
         return getBaseUrl() + "/v1/contact"
     }
