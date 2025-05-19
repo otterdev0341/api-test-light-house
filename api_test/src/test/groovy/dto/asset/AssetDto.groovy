@@ -4,14 +4,14 @@ import groovy.transform.ToString
 
 
 @ToString
-class RequestCreateAssetDto {
+class ReqCreateAssetDto {
     String name
     String asset_type_id
 }
 
 
 @ToString
-class RequestUpdateAssetDto {
+class ReqUpdateAssetDto {
     String name
     String asset_type_id
 }
