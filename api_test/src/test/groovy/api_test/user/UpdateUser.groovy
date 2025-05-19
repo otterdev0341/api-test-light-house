@@ -15,7 +15,7 @@ import io.restassured.response.Response
 import org.junit.jupiter.api.DisplayName
 import spock.lang.Specification
 
-@Epic("REST API Tests") // Overall epic for these tests
+@Epic("Edit User Information") // Overall epic for these tests
 @Feature("Perform Update User Information")
 class UpdateUser extends Specification {
 

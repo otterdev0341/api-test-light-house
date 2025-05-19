@@ -23,7 +23,7 @@ import static io.restassured.matcher.RestAssuredMatchers.*
 import static org.hamcrest.Matchers.*
 
 
-@Epic("REST API Tests") // Overall epic for these tests
+@Epic("Register Feature Test") // Overall epic for these tests
 @Feature("Register User")
 class Register extends Specification {
 

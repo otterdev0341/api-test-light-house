@@ -19,7 +19,7 @@ import io.restassured.http.ContentType
 import static io.restassured.matcher.RestAssuredMatchers.*
 import static org.hamcrest.Matchers.*
 
-@Epic("REST API Tests") // Overall epic for these tests
+@Epic("Auth Api Tests") // Overall epic for these tests
 @Feature("Perform Login Test must be pass")
 class Login extends Specification {
 
