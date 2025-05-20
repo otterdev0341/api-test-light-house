@@ -69,6 +69,27 @@ class UrlManagement {
 
     }
 
+    static String getIncomeRecord() {
+        return getBaseUrl() + "/v1/income"
+    }
+
+    static String getPaymentRecord() {
+        return getBaseUrl() + "/v1/payment"
+    }
+
+    static String getTransferRecord() {
+        return getBaseUrl() + "/v1/transfer"
+
+    }
+
+    static String getTransactionType() {
+        return getBaseUrl() + "/v1/transaction-type"
+    }
+
+    static String getCurrentSheet() {
+        return getBaseUrl() + "/v1/current-sheet"
+    }
+
     @Step("Get Asset Type Url for test base on Enum")
     static String getAssetTypeUrl(BASECRUD crud, String asset_type_id) {
         switch (crud){
