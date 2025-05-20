@@ -27,7 +27,7 @@ class FetchCurrentSheetUtility {
         return response
     }
 
-    static Response fetch_all_current_sheet_by_current_sheet_id(String current_sheet_id) {
+    static Response fetch_current_sheet_by_current_sheet_id(String current_sheet_id) {
         def prepared_url = UrlManagement.currentSheet + "/${current_sheet_id}"
         def token = TokenManagement.instance.currentToken
 

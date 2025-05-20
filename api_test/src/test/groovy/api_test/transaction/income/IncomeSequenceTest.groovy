@@ -82,7 +82,8 @@ class IncomeSequenceTest extends Specification {
         def before_current_sheet = FetchCurrentSheetUtility.fetch_the_current_sheet_by_asset_id(asset_id,target_asset.name)
             Allure.step("2 of 3 : Send POST to create income record")
         Response response = FetchApiResponseUtility.FetchCreateWithCredential(base_url, create_income_payload, jwt_token)
-            Allure.addAttachment("Response Payload - Create Income Record", "application/json", response.toString(), ".json")
+        def response_payload = response.path("data")
+            Allure.addAttachment("Response Payload - Create Income Record", "application/json", response_payload.toString(), ".json")
             Allure.step("3 of 3 : Retrived lasted current balance of asset id ${asset_id} to verify")
         sleep(7000) // 7 seconds to let operation success
         def after_current_sheet = FetchCurrentSheetUtility.fetch_the_current_sheet_by_asset_id(asset_id,target_asset.name)
@@ -121,8 +122,31 @@ class IncomeSequenceTest extends Specification {
     }// create test
 
 
+    @Story("view the income")
+    @Description("""
+        Get the income record after created in previous test,
+        It should be exist with response status 200
+""")
+    def "View the income"() {
 
-    
+        given: "target id to perform GET, token, url"
+        def transaction_id = this.new_income_transaction
+        def base_url = UrlManagement.incomeRecord
+        def jwt_token = TokenManagement.instance.currentToken
+
+        when: "Get to retrieve income record"
+        Response response = FetchApiResponseUtility.FetchGetByIdWithCredential(base_url, transaction_id, jwt_token)
+        then: "extract the value from response to perform validation"
+        def extract_status = response.getStatusCode()
+        def extract_id = response.path("data.id")
+
+        extract_status == 200
+        extract_id == transaction_id
+    }// view the income
+
+
+
+
 
 
 }// end class
