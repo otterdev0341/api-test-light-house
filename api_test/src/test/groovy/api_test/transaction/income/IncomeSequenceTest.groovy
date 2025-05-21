@@ -258,7 +258,50 @@ class IncomeSequenceTest extends Specification {
     }// end update
 
 
-    
+    @Story("delete income")
+    @Feature("delete income")
+    @Description("""
+        after create and update Income Record in previous funtion,
+        now use that id to delete it
+""")
+    def "delete income"() {
+        given: "url, token"
+        def base_url = UrlManagement.incomeRecord
+        def jwt_token = TokenManagement.instance.currentToken
+        def target_id = this.new_income_transaction
+        Allure.addAttachment("Request param - to perform Delete", "application/json", "${target_id}", ".json")
+
+        when: "send DELETE to delete income record"
+
+        Response response = FetchApiResponseUtility.FetchDeleteWithCredential(base_url, jwt_token, target_id)
+        Allure.addAttachment("Response Body - from perform Delete", "application/json", response.toString(), ".json")
+
+        then: "perform validation "
+        response.getStatusCode() == 200
+
+    }
+
+
+
+    @Story("get income that deleted")
+    @Feature("get income that deleted")
+    @Description("""
+        after delete income in previous function, now check it is exist or not
+""")
+    def "get income with the id that deleted"() {
+
+        given: "url, token, target id"
+        def base_url = UrlManagement.incomeRecord
+        def jwt_token = TokenManagement.instance.currentToken
+        def target_id = this.new_income_transaction
+
+        when: "call GET method"
+        Response response = FetchApiResponseUtility.FetchGetByIdWithCredential(base_url, target_id, jwt_token)
+        Allure.addAttachment("Response Body - from GET income that deleted with id ${target_id}", "application/json", response.toString(), ".json")
+
+        then: "validate the response"
+        response.getStatusCode() == 404
+    }
 
 
 
