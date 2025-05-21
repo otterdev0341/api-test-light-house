@@ -1,5 +1,7 @@
 package api_test.transaction.income
 
+import dto.transaction.income.ReqUpdateIncomeDto
+
 import java.math.RoundingMode
 import api_test.utility.HelperGetAsset
 import api_test.utility.HelperGetContactId
@@ -127,15 +129,19 @@ class IncomeSequenceTest extends Specification {
         Get the income record after created in previous test,
         It should be exist with response status 200
 """)
+    @Severity(SeverityLevel.NORMAL)
     def "View the income"() {
 
         given: "target id to perform GET, token, url"
         def transaction_id = this.new_income_transaction
         def base_url = UrlManagement.incomeRecord
         def jwt_token = TokenManagement.instance.currentToken
+        Allure.addAttachment("Request path param - Get Income Record", "application/json", transaction_id.toString(), ".json")
 
         when: "Get to retrieve income record"
         Response response = FetchApiResponseUtility.FetchGetByIdWithCredential(base_url, transaction_id, jwt_token)
+        Allure.addAttachment("Response body - Get Income Record", "application/json", response.toString(), ".json")
+
         then: "extract the value from response to perform validation"
         def extract_status = response.getStatusCode()
         def extract_id = response.path("data.id")
@@ -144,6 +150,115 @@ class IncomeSequenceTest extends Specification {
         extract_id == transaction_id
     }// view the income
 
+
+    @Story("view all income")
+    @Description("""
+        Get all income record then check the on that create in previous test
+        it should be exist with response status 200
+""")
+    @Severity(SeverityLevel.NORMAL)
+    def "view all the income"() {
+
+        given: "url, token"
+        Allure.step("1 of 4 : prepare url and jwt_token to perform GET")
+        def base_url = UrlManagement.incomeRecord
+        def jwt_token = TokenManagement.instance.currentToken
+
+
+        when: "Send GET to retrieve all income record"
+        Allure.step("2 of 4 : Send GET to retrieve all income record")
+        Response response = FetchApiResponseUtility.FetchGetAllWithCredential(base_url, jwt_token)
+        Allure.addAttachment("Response body - Get All Income Record", "application/json", response.toString(), ".json")
+
+
+        then: "extract id to validate"
+        Allure.step("3 of 4 : Extract all information from response")
+        def extract_response = response.getStatusCode()
+        def target_length = response.path("data.length")
+        def target_validate = response.path("data.data.find { it.id == '${this.new_income_transaction}'}")
+
+        Allure.step("4 of 4 : Perform Validate, to check the response is correct or not")
+        extract_response == 200
+        target_length > 0
+        target_validate != null
+
+
+    }
+
+
+    @Story("update income")
+    @Feature("update income")
+    @Description("""
+        After success create new income record now try to update it,
+        Also validate It before update and after update, is it return correct value
+""")
+    def "update income"() {
+        given: "payload to perform PUT, url, token"
+        Allure.step("Prepare payload to perform PUT, url, token")
+        def base_url = UrlManagement.incomeRecord
+        def jwt_token = TokenManagement.instance.currentToken
+        def asset_to_update = HelperGetAsset.get_asset_dto_for_update()
+        def contact_to_update = HelperGetContactId.get_first_contact_detail_for_update()
+        def note_to_update = "test update note${RandomUtility.generateRandom7DigitNumber()}"
+        def update_payload = new ReqUpdateIncomeDto(
+                amount: 99.99,
+                asset_id: asset_to_update.id,
+                contact_id: contact_to_update.id,
+                note: note_to_update
+        )
+
+        Allure.addAttachment("Request body - Update Income", "application/json", update_payload.toString(), ".json")
+
+        when: "GET and transform to ResEntryIncomeDto to check the value before update"
+        Response income_get_response = FetchApiResponseUtility.FetchGetByIdWithCredential(base_url, this.new_income_transaction, jwt_token)
+        def current_value = new ResEntryIncomeDto(
+                id: income_get_response.path("data.id"),
+                transaction_type_name: income_get_response.path("data.transaction_type_name"),
+                amount: income_get_response.path("data.amount"),
+                asset_name: income_get_response.path("data.asset_name"),
+                contact_name: income_get_response.path("data.contact_name"),
+                note: income_get_response.path("data.note"),
+        )
+        Allure.addAttachment("Response body - of Income id ${this.new_income_transaction} before perform PUT to update", "application/json", current_value.toString(), ".json")
+
+        then: "PUT with the payload and convert response into ResEntryIncomeDto to validate"
+        Response income_put_response = FetchApiResponseUtility.FetchUpdateWithCredential(base_url, update_payload, jwt_token, this.new_income_transaction)
+        def updated_value = new ResEntryIncomeDto(
+                id: income_put_response.path("data.id"),
+                transaction_type_name: income_put_response.path("data.transaction_type_name"),
+                amount: income_put_response.path("data.amount"),
+                asset_name: income_put_response.path("data.asset_name"),
+                contact_name: income_put_response.path("data.contact_name"),
+                note: income_put_response.path("data.note"),
+        )
+        Allure.addAttachment("Response body - of Income id ${this.new_income_transaction} after perform PUT to update", "application/json", updated_value.toString(), ".json")
+
+        BigDecimal payload = new BigDecimal(update_payload.amount.toString()).setScale(2, RoundingMode.HALF_UP)
+        BigDecimal updated_response = new BigDecimal(updated_value.amount.toString()).setScale(2, RoundingMode.HALF_UP)
+
+
+
+        expect: "all validation pass"
+        Allure.step("start : validate get current_income is correct response")
+        income_get_response.getStatusCode() == 200
+        income_put_response.getStatusCode() == 200
+
+        Allure.step("start : validate get current_income mut not equal update_value")
+        current_value.id == updated_value.id
+        current_value.transaction_type_name == updated_value.transaction_type_name
+        current_value.asset_name != updated_value.asset_name
+        current_value.contact_name != updated_value.contact_name
+        current_value.note != updated_value.note
+
+
+        Allure.step("start: validate the value got from put is correct as in payload to perform update")
+        payload == updated_response
+        updated_value.note == update_payload.note
+
+    }// end update
+
+
+    
 
 
 
