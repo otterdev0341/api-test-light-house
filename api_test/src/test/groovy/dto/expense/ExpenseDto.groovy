@@ -15,6 +15,18 @@ class ReqUpdateExpenseDto {
     String expense_type_id
 }
 
+
+@ToString
+class ResEntryExpenseDto {
+    String id
+    String description
+    String expense_type_name
+    String created_at
+    String updated_at
+}
+
+
+
 @ToString
 class ResEntryTransactionTypeDto {
     String id
