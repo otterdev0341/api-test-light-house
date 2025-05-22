@@ -5,10 +5,9 @@ import api_test.utility.HelperGetContactId
 import api_test.utility.HelperGetExpense
 import api_test.utility.HelperGetTransactionType
 import api_test.utility.TRANSACTION_TYPE
-import dto.payment.ReqCreatePaymentDto
-import dto.payment.ReqUpdatePaymentDto
-import dto.payment.ResEntryPaymentDto
-import groovy.transform.ToString
+import dto.transaction.payment.ReqCreatePaymentDto
+import dto.transaction.payment.ReqUpdatePaymentDto
+import dto.transaction.payment.ResEntryPaymentDto
 import helper.RandomUtility
 import helper.TokenManagement
 import helper.UrlManagement
@@ -200,7 +199,8 @@ class PaymentSequenceTest extends Specification {
     @Description("""
         After success create new payment record now try to update it,
         Also validate It before update and after update, is it return correct value
-""")
+    """)
+    @Severity(SeverityLevel.NORMAL)
     def "update payment"() {
         given: "payload to perform PUT, url, token"
         Allure.step("Prepare payload to perform PUT, url, token")
@@ -317,6 +317,10 @@ class PaymentSequenceTest extends Specification {
         delete_response_result == 200
         balance_before.add(amount_to_decrease) == balance_after
     }// delete
+
+
+
+
 
     @Story("get payment that deleted")
     @Feature("get income that deleted")

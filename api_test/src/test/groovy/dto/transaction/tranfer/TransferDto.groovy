@@ -1,41 +1,37 @@
-package dto.payment
+package dto.transaction.tranfer
 
 import groovy.transform.ToString
 
 
 @ToString
-class ReqCreatePaymentDto {
+class ReqCreateTransferDto {
     String transaction_type_id
     Double amount
-    String expense_id
-    String contact_id
     String asset_id
+    String destination_asset_id
+    String contact_id
     String note
-
 }
 
 
-
 @ToString
-class ReqUpdatePaymentDto {
+class ReqUpdateTransferDto {
     Double amount
-    String expense_id
-    String contact_id
     String asset_id
+    String destination_asset_id
+    String contact_id
     String note
-
-
 }
 
 
 @ToString
-class ResEntryPaymentDto {
+class ResEntryTransferDto {
     String id
     String transaction_type_name
-    Double amount
-    String expense_name
-    String contact_name
+    String amount
     String asset_name
+    String destination_asset_name
+    String contact_name
     String note
     String created_at
     String updated_at
