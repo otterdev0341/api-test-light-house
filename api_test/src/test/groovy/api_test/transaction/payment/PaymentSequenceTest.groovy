@@ -6,6 +6,9 @@ import api_test.utility.HelperGetExpense
 import api_test.utility.HelperGetTransactionType
 import api_test.utility.TRANSACTION_TYPE
 import dto.payment.ReqCreatePaymentDto
+import dto.payment.ReqUpdatePaymentDto
+import dto.payment.ResEntryPaymentDto
+import groovy.transform.ToString
 import helper.RandomUtility
 import helper.TokenManagement
 import helper.UrlManagement
@@ -32,7 +35,10 @@ class PaymentSequenceTest extends Specification {
 
     @Shared
     String new_payment_transaction
-
+    @Shared
+    String latest_asset_name
+    @Shared
+    String latest_amount
 
     @Story("the use create payment transaction")
     @Description("""
@@ -185,14 +191,115 @@ class PaymentSequenceTest extends Specification {
     }// view all payment
 
 
+
+
+    @Story("update payment")
+    @Feature("update payment")
+    @Description("""
+        After success create new payment record now try to update it,
+        Also validate It before update and after update, is it return correct value
+""")
+    def "update payment"() {
+        given: "payload to perform PUT, url, token"
+        Allure.step("Prepare payload to perform PUT, url, token")
+        def base_url = UrlManagement.paymentRecord
+        def jwt_token = TokenManagement.instance.currentToken
+        def amount_to_update = 72.36
+        def target_expense = HelperGetExpense.get_expense_dto_for_update()
+        def expense_id = target_expense.id
+        def target_contact = HelperGetContactId.get_first_contact_detail_for_update()
+        def contact_id = target_contact.id
+        def target_asset = HelperGetAsset.get_asset_dto_for_update()
+        def asset_id = target_asset.id
+        def note_to_update = "test tis payment note${RandomUtility.generateRandom7DigitNumber()}"
+        def updated_payload = new ReqUpdatePaymentDto(
+            amount:                     amount_to_update,
+            expense_id:                 expense_id,
+            contact_id:                 contact_id,
+            asset_id:                   asset_id,
+            note:                       note_to_update
+        )
+        Allure.addAttachment("Request body - Update Payment", "application/json", updated_payload.toString(), ".json")
+
+        when: "GET and transform to ResEntryPaymentDto to check the value before update"
+        Response payment_response = FetchApiResponseUtility.FetchGetByIdWithCredential(base_url, this.new_payment_transaction, jwt_token)
+        def current_payment_info = new ResEntryPaymentDto(
+                id:                 payment_response.path("data.id"),
+                transaction_type_name:  payment_response.path("data.transaction_type_name"),
+                amount:             payment_response.path("data.amount"),
+                expense_name:       payment_response.path("data.expense_name"),
+                contact_name:       payment_response.path("data.contact_name"),
+                asset_name:         payment_response.path("data.asset_name"),
+                note:               payment_response.path("data.note")
+        )
+        Allure.addAttachment("Response body - of Payment id ${this.new_payment_transaction} before perform PUT to update", "application/json", current_payment_info.toString(), ".json")
+
+
+        then: "PUT with the payload and convert response into ResEntry to validate"
+        Response payment_put_response = FetchApiResponseUtility.FetchUpdateWithCredential(base_url, updated_payload, jwt_token, this.new_payment_transaction)
+        // convert response into dto
+        def update_value_info = new ResEntryPaymentDto(
+                id:                 payment_put_response.path("data.id"),
+                transaction_type_name:  payment_put_response.path("data.transaction_type_name"),
+                amount:             payment_put_response.path("data.amount"),
+                expense_name:       payment_put_response.path("data.expense_name"),
+                contact_name:       payment_put_response.path("data.contact_name"),
+                asset_name:         payment_put_response.path("data.asset_name"),
+                note:               payment_put_response.path("data.note")
+        )
+
+        expect: "validation area"
+        Allure.step("start : validate get current_payment is correct response")
+        payment_put_response.getStatusCode() == 200
+
+        Allure.step("start : validate get current_payment mut not equal update_value")
+        current_payment_info.id == update_value_info.id
+        current_payment_info.transaction_type_name == update_value_info.transaction_type_name
+        current_payment_info.contact_name != update_value_info.contact_name
+
+        current_payment_info.asset_name != update_value_info.asset_name
+
+
+
+        Allure.step("start: validate the value got from put is correct as in payload to perform update")
+        BigDecimal payload_value = new BigDecimal(updated_payload.amount.toString()).setScale(2, RoundingMode.HALF_UP)
+        BigDecimal response_value = new BigDecimal(update_value_info.amount.toString()).setScale(2, RoundingMode.HALF_UP)
+        payload_value == response_value
+
+    }// update payment
+
+
+
+    @Story("delete payment")
+    @Feature("delete payment")
+    @Description("""
+        after create and update Payment Record in previous function,
+        now use that id to delete it
+""")
+    def "delete payment"() {
+
+    }
+
+
+
 }// end class
 
-//class ReqCreatePaymentDto {
-//    String transaction_type_id
+//class ReqUpdatePaymentDto {
 //    Double amount
 //    String expense_id
 //    String contact_id
 //    String asset_id
 //    String note
-//
+//}
+
+//@ToString
+//class ResEntryPaymentDto {
+//    String id
+//    String transaction_type_name
+//    Double amount
+//    String expense_name
+//    String contact_name
+//    String asset_name
+//    String created_at
+//    String updated_at
 //}

@@ -32,15 +32,17 @@ import spock.lang.Stepwise
 class IncomeSequenceTest extends Specification {
 
 
-//    class ReqCreateIncomeDto {
-//        String transaction_type_id // income, transfer, expense,
-//        Double amount
-//        String asset_id
-//        String contact_id
-//        String note
-//    }
+
     @Shared
     String new_income_transaction
+
+    @Shared
+    String latest_asset_id
+    @Shared
+    String latest_asset_name
+    @Shared
+    Double lasted_amount
+
 
     @Story("create income record")
     @Description("""
@@ -200,13 +202,17 @@ class IncomeSequenceTest extends Specification {
         def asset_to_update = HelperGetAsset.get_asset_dto_for_update()
         def contact_to_update = HelperGetContactId.get_first_contact_detail_for_update()
         def note_to_update = "test update note${RandomUtility.generateRandom7DigitNumber()}"
+        def amount_to_update = 99.99
         def update_payload = new ReqUpdateIncomeDto(
-                amount: 99.99,
+                amount: amount_to_update,
                 asset_id: asset_to_update.id,
                 contact_id: contact_to_update.id,
                 note: note_to_update
         )
-
+        // set lastest_asset_id to perform test in delete below
+        this.latest_asset_id = asset_to_update.id
+        this.latest_asset_name = asset_to_update.name
+        this.lasted_amount = amount_to_update
         Allure.addAttachment("Request body - Update Income", "application/json", update_payload.toString(), ".json")
 
         when: "GET and transform to ResEntryIncomeDto to check the value before update"
@@ -261,25 +267,45 @@ class IncomeSequenceTest extends Specification {
     @Story("delete income")
     @Feature("delete income")
     @Description("""
-        after create and update Income Record in previous funtion,
+        after create and update Income Record in previous function,
         now use that id to delete it
 """)
     def "delete income"() {
         given: "url, token"
+        Allure.step("Prepare url, token, to perform DELETE")
         def base_url = UrlManagement.incomeRecord
         def jwt_token = TokenManagement.instance.currentToken
         def target_id = this.new_income_transaction
         Allure.addAttachment("Request param - to perform Delete", "application/json", "${target_id}", ".json")
 
-        when: "send DELETE to delete income record"
+        when: "get current, and current after delete, and send DELETE method"
+            Allure.step("check current balance before delete")
+        def before_delete = FetchCurrentSheetUtility.fetch_the_current_sheet_by_asset_id(this.latest_asset_id, this.latest_asset_name)
+            Allure.addAttachment("before delete : current sheet of asset id ${this.latest_asset_id} name: ${this.latest_asset_name}", before_delete.toString(), ".json")
 
+            Allure.step("send DELETE method")
         Response response = FetchApiResponseUtility.FetchDeleteWithCredential(base_url, jwt_token, target_id)
-        Allure.addAttachment("Response Body - from perform Delete", "application/json", response.toString(), ".json")
+            Allure.addAttachment("Response Body - from perform Delete", "application/json", response.path("data").toString(), ".json")
 
-        then: "perform validation "
-        response.getStatusCode() == 200
+            Allure.step("check current balance after delete")
+        def after_delete = FetchCurrentSheetUtility.fetch_the_current_sheet_by_asset_id(this.latest_asset_id, this.latest_asset_name)
+            Allure.addAttachment("after delete: current sheet of asset id ${this.latest_asset_id} name: ${this.latest_asset_name}", after_delete.toString(), ".json")
 
-    }
+        then: "extract data from response to validate"
+            Allure.step("extract data from response to validate")
+        def delete_response_result = response.getStatusCode()
+        // extract of current as the same type
+        BigDecimal balance_before = new BigDecimal(before_delete.balance.toString()).setScale(2, RoundingMode.HALF_UP)
+        BigDecimal balance_after = new BigDecimal(after_delete.balance.toString()).setScale(2, RoundingMode.HALF_UP)
+        BigDecimal amount_to_decrease = new BigDecimal(this.lasted_amount.toString()).setScale(2, RoundingMode.HALF_UP)
+
+
+        expect: "all validation must be pass"
+            Allure.step("validate the response status code expect : 200")
+        delete_response_result == 200
+        balance_after == balance_before.subtract(amount_to_decrease)
+
+    }// delete income
 
 
 

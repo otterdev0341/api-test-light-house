@@ -18,7 +18,6 @@ class ReqCreatePaymentDto {
 
 @ToString
 class ReqUpdatePaymentDto {
-    String transaction_type_id
     Double amount
     String expense_id
     String contact_id
@@ -37,6 +36,7 @@ class ResEntryPaymentDto {
     String expense_name
     String contact_name
     String asset_name
+    String note
     String created_at
     String updated_at
 }
